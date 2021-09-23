@@ -10,6 +10,7 @@ def draw_city():
     road.draw_road()
     power.draw_power_plant()
     road.draw_road()
+    subway.draw_subway()
     draw_leisure()
     road.draw_road()
     draw_outdoors()
