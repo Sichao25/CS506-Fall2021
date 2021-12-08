@@ -50,6 +50,7 @@ def test_manhattan():
     
     assert sim.manhattan_dist([0,0], [1,1]) == 2
     assert sim.manhattan_dist([0,0,0], [1,1,1]) == 3
+    assert sim.manhattan_dist([1,0,1], [0,1,0]) == 3
     dimension = random.randint(1, 100)
     x = _generate_rand_point(dimension)
     # distance from a pt to itself is 0
@@ -87,6 +88,7 @@ def test_jaccard():
     
     assert sim.jaccard_dist([0,0], [1,0]) == .5
     assert sim.jaccard_dist([0,0,0], [1,1,1]) == 1
+    assert sim.jaccard_dist([0,0], [0,0]) == 0
     dimension = random.randint(1, 100)
     x = _generate_rand_point(dimension)
     # distance from a pt to itself is 0
