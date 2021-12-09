@@ -1,6 +1,7 @@
 from collections import defaultdict
 from math import inf
 import random
+import sys
 import csv
 
 
@@ -13,11 +14,12 @@ def point_avg(points):
     """
     #raise NotImplementedError()
     means=[]
-    n=len(points)
-    for j in range(len(points[0])):
-        mean=0
-        for i in range(n):
-            means+=points[i][j]
+    n = len(points)
+    d = len(points[0])
+    for j in range(d):
+        mean = 0
+        for p in points:
+            mean += p[j]
         means.append(mean/n)
     return means
     
@@ -29,29 +31,17 @@ def update_centers(dataset, assignments):
     Return `k` centers in a list
     """
     #raise NotImplementedError()
-    centroids=[]
-    sum_samples={}
-    for i in range(len(assignments)):
-        if assignments[i][0] not in sum_samples:
-            sum_samples[assignments[i][0]]=[0]
-            for j in range(len(dataset[0])):
-                sum_samples[assignments[i][0]].append(0)
-        sum_samples[assignments[i][0]][0]+=1
-        for j in range(len(dataset[0])):
-            sample=sum_samples[assignments[i][0]]
-            sample[j+1]+=dataset[i][j]
-    
-    i=0
-    while i in sum_samples:
-        value=sum_samples[i]
-        slice_value=[]
-        for num in value[1:]:
-            slice_value.append(num/value[0])
-        centroids.append(slice_value)
-    #centroids.append([value[0]/value[2],value[1]/value[2]])
-        i+=1
-    centroids=np.array(centroids)
-    #print(centroids)
+    clusters = list(set(assignments))
+    clusters.sort()
+    centroids = []
+
+    for c in clusters:
+        points_in_cluster = []
+        for i in range(len(dataset)):
+            if assignments[i] == c:
+                points_in_cluster.append(dataset[i])
+        centroids.append(point_avg(points_in_cluster))
+
     return centroids
 
         
@@ -118,7 +108,30 @@ def generate_k_pp(dataset, k):
     to their distance as per kmeans pp
     """
     # raise NotImplementedError()
-    pass
+    centroids = []
+    centroids.append(random.choice(dataset))
+    for i in range(1,k):
+        dists = []
+        pp = []
+        cumsum = []
+        for point in dataset:   
+            d = sys.maxsize
+            for j in range(len(centroids)):
+                dist = distance(point, centroids[j])
+                dists.append(min(d, dist))
+            d2 = sum(dists)
+            p = d/d2
+            pp.append(p)
+            cumsum.append(sum(pp))
+        rdm = random.randrange(0,1)
+        for p in cumsum:
+            if rdm < p:
+                i = j
+                break
+        centroids.append(dataset[i])
+    return centroids  
+
+
 
 def _do_lloyds_algo(dataset, k_points):
     assignments = assign_points(dataset, k_points)
